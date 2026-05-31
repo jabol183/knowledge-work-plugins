@@ -1,0 +1,8 @@
+{
+  "name": "ha-solar",
+  "version": "1.0.0",
+  "description": "Home Assistant solar and battery monitoring — diagnose power flow sensor misconfigurations, generate corrected template sensors, and validate energy balance equations. Fixes common issues where grid readings incorrectly include battery contribution.",
+  "author": {
+    "name": "Anthropic"
+  }
+}
