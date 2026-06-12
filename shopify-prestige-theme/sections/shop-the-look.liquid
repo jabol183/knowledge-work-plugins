@@ -1,0 +1,181 @@
+<section class="shop-the-look section-spacing" data-section-id="{{ section.id }}" data-shop-the-look>
+  <div class="container">
+
+    {%- if section.settings.title != blank or section.settings.eyebrow != blank -%}
+      <div style="text-align: {{ section.settings.title_alignment | default: 'center' }}; margin-bottom: var(--space-7);" data-animate>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="eyebrow" style="margin-bottom: var(--space-3);">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="heading-md">{{ section.settings.title }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="shop-the-look__media" data-animate data-animate-delay="1">
+
+      {%- if section.settings.image != blank -%}
+        {{
+          section.settings.image
+          | image_url: width: 1600
+          | image_tag:
+            loading: 'lazy',
+            alt: section.settings.image.alt | escape | default: section.settings.title,
+            width: section.settings.image.width,
+            height: section.settings.image.height
+        }}
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'hotspot' -%}
+          {%- assign product = all_products[block.settings.product] -%}
+
+          <button
+            class="hotspot"
+            data-hotspot="{{ block.id }}"
+            style="left: {{ block.settings.position_x }}%; top: {{ block.settings.position_y }}%;"
+            aria-label="{{ 'sections.shop_the_look.view_product' | t | default: 'View product' }}: {{ product.title | default: 'Product' }}"
+            aria-expanded="false"
+            aria-controls="hotspot-popover-{{ block.id }}"
+            {{ block.shopify_attributes }}
+          >
+            <span class="hotspot__pulse" aria-hidden="true"></span>
+            {% render 'icon-pack', icon: 'hotspot', width: 16, height: 16 %}
+          </button>
+
+          {%- if product != blank -%}
+            <div
+              id="hotspot-popover-{{ block.id }}"
+              class="hotspot-popover hotspot-popover--right"
+              data-hotspot-popover="{{ block.id }}"
+              role="tooltip"
+              aria-label="{{ product.title }}"
+              style="left: {{ block.settings.position_x }}%; top: {{ block.settings.position_y }}%;"
+              onclick="event.stopPropagation();"
+            >
+              <a href="{{ product.url }}" class="hotspot-popover__image">
+                {%- if product.featured_image -%}
+                  {{ product.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: product.title }}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </a>
+              <div class="hotspot-popover__info">
+                {%- if product.vendor != blank -%}
+                  <p class="eyebrow" style="font-size: 1rem;">{{ product.vendor }}</p>
+                {%- endif -%}
+                <a href="{{ product.url }}" class="hotspot-popover__title">{{ product.title }}</a>
+                <p class="hotspot-popover__price">{{ product.price | money }}</p>
+                <button
+                  type="button"
+                  class="btn btn--primary btn--sm"
+                  data-quick-buy="{{ product.variants.first.id }}"
+                  onclick="
+                    event.preventDefault();
+                    fetch('{{ routes.cart_add_url }}', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                      body: JSON.stringify({ id: {{ product.variants.first.id }}, quantity: 1 })
+                    }).then(() => {
+                      document.dispatchEvent(new CustomEvent('cart:open'));
+                      document.dispatchEvent(new CustomEvent('cart:refresh'));
+                    });
+                  "
+                >{{ 'products.product.add_to_cart' | t | default: 'Add to Cart' }}</button>
+              </div>
+            </div>
+          {%- endif -%}
+
+        {%- endif -%}
+      {%- endfor -%}
+
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shop the look",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "The Look"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop the Look"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Lifestyle image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Hotspot",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "range",
+          "id": "position_x",
+          "label": "Horizontal position",
+          "min": 5,
+          "max": 95,
+          "step": 1,
+          "unit": "%",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "position_y",
+          "label": "Vertical position",
+          "min": 5,
+          "max": 95,
+          "step": 1,
+          "unit": "%",
+          "default": 50
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop the look",
+      "blocks": [
+        {
+          "type": "hotspot",
+          "settings": { "position_x": 35, "position_y": 40 }
+        },
+        {
+          "type": "hotspot",
+          "settings": { "position_x": 65, "position_y": 60 }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

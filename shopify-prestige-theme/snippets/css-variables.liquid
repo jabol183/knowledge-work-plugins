@@ -1,0 +1,115 @@
+<style>
+  :root {
+    /* Color System */
+    --color-background: {{ settings.color_background | default: '#FFFFFF' }};
+    --color-background-secondary: {{ settings.color_background_secondary | default: '#F9F9F9' }};
+    --color-background-tertiary: {{ settings.color_background_tertiary | default: '#F4F4F4' }};
+    --color-text-primary: {{ settings.color_text | default: '#1C1C1C' }};
+    --color-text-secondary: {{ settings.color_text_secondary | default: '#707070' }};
+    --color-accent: {{ settings.color_accent | default: '#1C1C1C' }};
+    --color-border: {{ settings.color_border | default: '#E5E5E5' }};
+    --color-error: #C0392B;
+    --color-success: #27AE60;
+    --color-overlay: rgba(0, 0, 0, 0.45);
+    --color-scrim: rgba(0, 0, 0, 0.6);
+
+    /* Typography — Headings */
+    --font-heading-family: {{ settings.type_header_font.family | default: 'Didot, "Bodoni MT", "Times New Roman"' }}, serif;
+    --font-heading-weight: {{ settings.type_header_font.weight | default: 400 }};
+    --font-heading-style: {{ settings.type_header_font.style | default: 'normal' }};
+    --font-heading-letter-spacing: 0.06em;
+    --font-heading-line-height: 1.15;
+
+    /* Typography — Body */
+    --font-body-family: {{ settings.type_body_font.family | default: '"Helvetica Neue", Arial' }}, sans-serif;
+    --font-body-weight: {{ settings.type_body_font.weight | default: 300 }};
+    --font-body-style: {{ settings.type_body_font.style | default: 'normal' }};
+    --font-body-letter-spacing: 0.01em;
+    --font-body-line-height: 1.6;
+
+    /* Type Scale */
+    --font-size-xs: 1.1rem;
+    --font-size-sm: 1.3rem;
+    --font-size-base: 1.5rem;
+    --font-size-md: 1.7rem;
+    --font-size-lg: 2.2rem;
+    --font-size-xl: 3.2rem;
+    --font-size-2xl: 4.8rem;
+    --font-size-3xl: 6.4rem;
+    --font-size-4xl: 9.6rem;
+
+    /* Spacing Scale */
+    --space-1: 0.4rem;
+    --space-2: 0.8rem;
+    --space-3: 1.2rem;
+    --space-4: 1.6rem;
+    --space-5: 2.4rem;
+    --space-6: 3.2rem;
+    --space-7: 4.8rem;
+    --space-8: 6.4rem;
+    --space-9: 9.6rem;
+    --space-10: 12.8rem;
+
+    /* Layout */
+    --container-max-width: {{ settings.page_width | default: 1440 }}px;
+    --container-gutter: 4rem;
+    --container-gutter-mobile: 2rem;
+    --header-height: 7.2rem;
+    --header-height-mobile: 5.6rem;
+
+    /* Borders */
+    --border-width: 1px;
+    --border-color: var(--color-border);
+    --border-radius: 0px;
+
+    /* Transitions */
+    --ease-premium: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+    --ease-out: cubic-bezier(0, 0.55, 0.45, 1);
+    --duration-fast: 180ms;
+    --duration-base: 320ms;
+    --duration-slow: 540ms;
+    --duration-crawl: 900ms;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+    --shadow-lg: 0 12px 48px rgba(0,0,0,0.14);
+    --shadow-drawer: -8px 0 40px rgba(0,0,0,0.12);
+
+    /* Z-Index Scale */
+    --z-below: -1;
+    --z-base: 0;
+    --z-raised: 10;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-overlay: 300;
+    --z-modal: 400;
+    --z-toast: 500;
+
+    /* Breakpoints (reference only — use media queries in CSS) */
+    --bp-sm: 480px;
+    --bp-md: 768px;
+    --bp-lg: 1024px;
+    --bp-xl: 1280px;
+    --bp-2xl: 1440px;
+
+    /* Product Grid */
+    --product-grid-columns: {{ settings.products_per_row | default: 4 }};
+    --product-grid-gap: 2.4rem;
+
+    /* Button */
+    --btn-height: 4.8rem;
+    --btn-padding-x: 3.2rem;
+    --btn-font-size: var(--font-size-xs);
+    --btn-letter-spacing: 0.12em;
+    --btn-font-weight: 500;
+  }
+
+  {% if settings.type_header_font %}
+    {{ settings.type_header_font | font_face: font_display: 'swap' }}
+  {% endif %}
+  {% if settings.type_body_font %}
+    {{ settings.type_body_font | font_face: font_display: 'swap' }}
+  {% endif %}
+</style>

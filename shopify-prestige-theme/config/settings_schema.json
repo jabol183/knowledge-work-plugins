@@ -1,0 +1,201 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Prestige",
+    "theme_author": "Prestige Studio",
+    "theme_version": "1.0.0",
+    "theme_documentation_url": "https://help.shopify.com",
+    "theme_support_email": "support@example.com"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_background_secondary",
+        "label": "Secondary background",
+        "default": "#F9F9F9"
+      },
+      {
+        "type": "color",
+        "id": "color_background_tertiary",
+        "label": "Tertiary background",
+        "default": "#F4F4F4"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#1C1C1C"
+      },
+      {
+        "type": "color",
+        "id": "color_text_secondary",
+        "label": "Secondary text",
+        "default": "#707070"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent",
+        "default": "#1C1C1C"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Borders",
+        "default": "#E5E5E5"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "type_header_font",
+        "label": "Headings",
+        "default": "didot_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body",
+        "default": "helvetica_neue_n3"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "label": "Max container width",
+        "min": 1200,
+        "max": 1600,
+        "step": 40,
+        "default": 1440,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "Will be resized to 32×32px"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "Pinterest URL"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_link",
+        "label": "TikTok URL"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "X (Twitter) URL"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "YouTube URL"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_cart_drawer",
+        "label": "Enable slide-out cart drawer",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping threshold ($)",
+        "info": "Set to 0 to hide the progress bar",
+        "default": 150
+      }
+    ]
+  },
+  {
+    "name": "Product grid",
+    "settings": [
+      {
+        "type": "range",
+        "id": "products_per_row",
+        "label": "Products per row (desktop)",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "default": 4
+      },
+      {
+        "type": "select",
+        "id": "product_image_aspect_ratio",
+        "label": "Product image ratio",
+        "options": [
+          { "value": "1/1", "label": "Square (1:1)" },
+          { "value": "4/5", "label": "Portrait (4:5)" },
+          { "value": "3/4", "label": "Portrait (3:4)" },
+          { "value": "natural", "label": "Natural" }
+        ],
+        "default": "4/5"
+      }
+    ]
+  },
+  {
+    "name": "Animations",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_animations",
+        "label": "Enable scroll animations",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Cookie consent",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_cookie_consent",
+        "label": "Enable Shopify cookie consent banner",
+        "default": true
+      }
+    ]
+  }
+]

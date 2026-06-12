@@ -1,0 +1,15 @@
+<div class="container" style="max-width: 84rem; padding-top: calc(var(--header-height) + var(--space-7)); padding-bottom: var(--space-9);">
+  <h1 class="heading-sm" style="margin-bottom: var(--space-7); padding-bottom: var(--space-5); border-bottom: 1px solid var(--color-border);" data-animate>
+    {{ page.title }}
+  </h1>
+  <div class="rte body-lg" style="max-width: 72rem;" data-animate data-animate-delay="1">
+    {{ page.content }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "settings": []
+}
+{% endschema %}

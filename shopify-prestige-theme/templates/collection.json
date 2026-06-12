@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "show_collection_image": true,
+        "show_description": true,
+        "show_sidebar": true,
+        "products_per_row": 3,
+        "products_per_page": 24,
+        "show_vendor": false,
+        "show_swatches": true
+      }
+    }
+  },
+  "order": ["main"]
+}

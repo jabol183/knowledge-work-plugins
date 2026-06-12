@@ -1,0 +1,176 @@
+{%- assign collection = collections[section.settings.collection] -%}
+
+<section class="featured-collection section-spacing" data-section-id="{{ section.id }}">
+  <div class="container">
+
+    <div class="featured-collection__header" data-animate>
+      <div>
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="eyebrow" style="margin-bottom: var(--space-2);">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h2 class="featured-collection__heading">
+          {{ section.settings.title | default: collection.title | default: 'Featured Collection' }}
+        </h2>
+      </div>
+
+      {%- if section.settings.show_view_all and collection != blank -%}
+        <a href="{{ collection.url }}" class="btn btn--ghost">
+          {{ 'sections.featured_collection.view_all' | t | default: 'View All' }}
+          {% render 'icon-pack', icon: 'arrow-right' %}
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.layout == 'carousel' -%}
+
+      <div class="carousel-viewport" data-carousel style="--carousel-visible: {{ section.settings.products_per_row | default: 4 }};">
+        <div class="carousel-track">
+          {%- if collection != blank -%}
+            {%- for product in collection.products limit: section.settings.products_to_show -%}
+              <div class="carousel-item">
+                {% render 'product-card',
+                  product: product,
+                  show_vendor: section.settings.show_vendor,
+                  show_swatches: section.settings.show_swatches
+                %}
+              </div>
+            {%- endfor -%}
+          {%- else -%}
+            {%- for i in (1..section.settings.products_per_row) -%}
+              <div class="carousel-item">
+                {%- assign placeholder_index = forloop.index | modulo: 6 | plus: 1 -%}
+                <div class="product-card">
+                  <div class="product-card__media">
+                    {{ 'product-' | append: placeholder_index | placeholder_svg_tag: 'product-card__image placeholder-svg' }}
+                  </div>
+                  <div class="product-card__info">
+                    <p class="product-card__title">Product Title</p>
+                    <p class="product-card__price">$0.00</p>
+                  </div>
+                </div>
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="carousel-controls">
+        <button class="carousel-btn carousel-btn--prev" aria-label="{{ 'sections.featured_collection.prev' | t | default: 'Previous products' }}">
+          {% render 'icon-pack', icon: 'chevron-left' %}
+        </button>
+        <button class="carousel-btn carousel-btn--next" aria-label="{{ 'sections.featured_collection.next' | t | default: 'Next products' }}">
+          {% render 'icon-pack', icon: 'chevron-right' %}
+        </button>
+      </div>
+
+    {%- else -%}
+
+      <div class="product-grid" style="--product-grid-columns: {{ section.settings.products_per_row }};">
+        {%- if collection != blank -%}
+          {%- for product in collection.products limit: section.settings.products_to_show -%}
+            <div data-animate data-animate-delay="{{ forloop.index | modulo: 4 }}">
+              {% render 'product-card',
+                product: product,
+                show_vendor: section.settings.show_vendor,
+                show_swatches: section.settings.show_swatches
+              %}
+            </div>
+          {%- else -%}
+            <p class="text-secondary">{{ 'sections.featured_collection.no_products' | t | default: 'No products found.' }}</p>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for i in (1..section.settings.products_to_show) -%}
+            <div data-animate data-animate-delay="{{ forloop.index | modulo: 4 }}">
+              {%- assign placeholder_index = forloop.index | modulo: 6 | plus: 1 -%}
+              <div class="product-card">
+                <div class="product-card__media">
+                  {{ 'product-' | append: placeholder_index | placeholder_svg_tag: 'product-card__image placeholder-svg' }}
+                </div>
+                <div class="product-card__info">
+                  <p class="product-card__title">Example Product</p>
+                  <p class="product-card__price">$0.00</p>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading (overrides collection title)"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 16,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "label": "Products per row",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "Show color swatches",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View All' link",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured collection"
+    }
+  ]
+}
+{% endschema %}

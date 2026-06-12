@@ -1,0 +1,57 @@
+{% paginate blog.articles by 9 %}
+<div class="container section-spacing" style="padding-top: calc(var(--header-height) + var(--space-6));">
+
+  <div style="margin-bottom: var(--space-7); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-5);" data-animate>
+    <h1 class="heading-sm">{{ blog.title }}</h1>
+  </div>
+
+  <div class="product-grid" style="--product-grid-columns: 3;">
+    {%- for article in blog.articles -%}
+      <article class="product-card" data-animate data-animate-delay="{{ forloop.index | modulo: 3 }}">
+        <a href="{{ article.url }}" class="product-card__media" style="display: block; aspect-ratio: 16/10;">
+          {%- if article.image -%}
+            {{ article.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: article.image.alt | escape, class: 'product-card__image' }}
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg product-card__image' }}
+          {%- endif -%}
+        </a>
+        <div class="product-card__info" style="padding-top: var(--space-4);">
+          {%- if article.tags.size > 0 -%}
+            <p class="product-card__vendor">{{ article.tags | first }}</p>
+          {%- endif -%}
+          <h2 class="product-card__title" style="font-size: var(--font-size-md);">
+            <a href="{{ article.url }}">{{ article.title }}</a>
+          </h2>
+          <p class="body-xs text-secondary">{{ article.published_at | date: '%B %d, %Y' }}</p>
+          {%- if article.excerpt != blank -%}
+            <p class="body-sm text-secondary" style="margin-top: var(--space-3); line-height: 1.6;">{{ article.excerpt | strip_html | truncate: 120 }}</p>
+          {%- endif -%}
+          <a href="{{ article.url }}" class="btn btn--ghost" style="margin-top: var(--space-4);">
+            {{ 'blogs.article.read_more' | t | default: 'Read More' }}
+            {% render 'icon-pack', icon: 'arrow-right' %}
+          </a>
+        </div>
+      </article>
+    {%- endfor -%}
+  </div>
+
+  {%- if paginate.pages > 1 -%}
+    <nav class="pagination" aria-label="{{ 'general.pagination.label' | t | default: 'Pagination' }}">
+      {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}" class="pagination__item">{% render 'icon-pack', icon: 'chevron-left' %}</a>{%- endif -%}
+      {%- for part in paginate.parts -%}
+        {%- if part.is_link -%}<a href="{{ part.url }}" class="pagination__item">{{ part.title }}</a>
+        {%- elsif part.title == paginate.current_page -%}<span class="pagination__item pagination__item--active">{{ part.title }}</span>
+        {%- else -%}<span class="pagination__item">{{ part.title }}</span>{%- endif -%}
+      {%- endfor -%}
+      {%- if paginate.next -%}<a href="{{ paginate.next.url }}" class="pagination__item">{% render 'icon-pack', icon: 'chevron-right' %}</a>{%- endif -%}
+    </nav>
+  {%- endif -%}
+</div>
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "settings": []
+}
+{% endschema %}

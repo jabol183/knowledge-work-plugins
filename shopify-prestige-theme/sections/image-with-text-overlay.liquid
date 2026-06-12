@@ -1,0 +1,154 @@
+<section class="image-with-text section-spacing{% if section.settings.full_width %} container--full{% endif %}" data-section-id="{{ section.id }}">
+
+  <div class="{% unless section.settings.full_width %}container{% endunless %}">
+    <div class="image-with-text{% if section.settings.image_position == 'right' %} image-with-text--reverse{% endif %}">
+
+      {%- comment -%} Media Panel {%- endcomment -%}
+      <div
+        class="image-with-text__media"
+        {% if section.settings.enable_parallax %}
+          data-parallax
+          data-parallax-speed="{{ section.settings.parallax_speed | default: 0.3 }}"
+        {% endif %}
+      >
+        {%- if section.settings.image != blank -%}
+          {{
+            section.settings.image
+            | image_url: width: 1200
+            | image_tag:
+              loading: 'lazy',
+              alt: section.settings.image.alt | escape | default: section.settings.heading,
+              width: section.settings.image.width,
+              height: section.settings.image.height
+          }}
+        {%- else -%}
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Content Panel {%- endcomment -%}
+      <div
+        class="image-with-text__content"
+        style="background-color: {{ section.settings.content_background | default: 'var(--color-background)' }};"
+      >
+
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="image-with-text__eyebrow" data-animate>{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <h2 class="image-with-text__heading" data-animate data-animate-delay="1">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.body != blank -%}
+          <div class="image-with-text__body rte" data-animate data-animate-delay="2">{{ section.settings.body }}</div>
+        {%- endif -%}
+
+        {%- if section.settings.button_label != blank -%}
+          <div data-animate data-animate-delay="3">
+            <a href="{{ section.settings.button_url | default: '#' }}" class="btn btn--{{ section.settings.button_style | default: 'primary' }}">
+              {{ section.settings.button_label }}
+              {% render 'icon-pack', icon: 'arrow-right' %}
+            </a>
+          </div>
+        {%- endif -%}
+
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_parallax",
+      "label": "Enable parallax scroll",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "parallax_speed",
+      "label": "Parallax speed",
+      "min": 0.1,
+      "max": 0.8,
+      "step": 0.1,
+      "default": 0.3
+    },
+    {
+      "type": "color",
+      "id": "content_background",
+      "label": "Content background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Crafted for the discerning few"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body text",
+      "default": "<p>Every piece in our collection is designed with an uncompromising attention to detail, from the finest materials to the last stitch.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Discover More"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Outline" },
+        { "value": "ghost", "label": "Text link" }
+      ],
+      "default": "secondary"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text"
+    }
+  ]
+}
+{% endschema %}

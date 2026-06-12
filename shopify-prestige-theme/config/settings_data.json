@@ -1,0 +1,18 @@
+{
+  "current": {
+    "color_background": "#FFFFFF",
+    "color_background_secondary": "#F9F9F9",
+    "color_background_tertiary": "#F4F4F4",
+    "color_text": "#1C1C1C",
+    "color_text_secondary": "#707070",
+    "color_accent": "#1C1C1C",
+    "color_border": "#E5E5E5",
+    "page_width": 1440,
+    "enable_cart_drawer": true,
+    "free_shipping_threshold": 150,
+    "products_per_row": 4,
+    "product_image_aspect_ratio": "4/5",
+    "enable_animations": true,
+    "enable_cookie_consent": true
+  }
+}
