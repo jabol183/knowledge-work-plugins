@@ -1,0 +1,251 @@
+<header
+  class="site-header{% if section.settings.transparent_header %} site-header--transparent{% endif %}"
+  data-section-id="{{ section.id }}"
+  {% if section.settings.transparent_header %}data-transparent{% endif %}
+  role="banner"
+>
+  <div class="site-header__inner">
+
+    {%- comment -%} LEFT NAV {%- endcomment -%}
+    <nav class="site-header__nav" role="navigation" aria-label="{{ 'accessibility.main_menu' | t | default: 'Main menu' }}">
+      {%- for link in section.settings.menu.links -%}
+        {%- if link.links != blank -%}
+          <button
+            class="site-header__link"
+            data-mega-menu-trigger="{{ link.handle }}"
+            aria-expanded="false"
+            aria-controls="mega-menu-{{ link.handle }}"
+          >
+            {{ link.title }}
+            {% render 'icon-pack', icon: 'chevron-down' %}
+          </button>
+        {%- else -%}
+          <a
+            href="{{ link.url }}"
+            class="site-header__link{% if link.current %} site-header__link--active{% endif %}"
+            {% if link.current %}aria-current="page"{% endif %}
+          >{{ link.title }}</a>
+        {%- endif -%}
+      {%- endfor -%}
+    </nav>
+
+    {%- comment -%} LOGO (center) {%- endcomment -%}
+    <a href="{{ routes.root_url }}" class="site-header__logo" aria-label="{{ shop.name }}">
+      {%- if section.settings.logo != blank -%}
+        {{
+          section.settings.logo
+          | image_url: width: 320
+          | image_tag:
+            loading: 'eager',
+            fetchpriority: 'high',
+            alt: section.settings.logo.alt | default: shop.name,
+            width: section.settings.logo_max_width,
+            height: section.settings.logo_max_width | divided_by: section.settings.logo.aspect_ratio
+        }}
+      {%- else -%}
+        {{ shop.name }}
+      {%- endif -%}
+    </a>
+
+    {%- comment -%} ACTIONS (right) {%- endcomment -%}
+    <div class="site-header__actions">
+      <button
+        class="site-header__icon-btn"
+        data-search-open
+        aria-label="{{ 'search.search' | t | default: 'Search' }}"
+        aria-controls="search-modal"
+        aria-expanded="false"
+      >
+        {% render 'icon-pack', icon: 'search' %}
+      </button>
+
+      {%- if shop.customer_accounts_enabled -%}
+        <a
+          href="{{ routes.account_url }}"
+          class="site-header__icon-btn"
+          aria-label="{{ 'customer.account.title' | t | default: 'Account' }}"
+        >
+          {% render 'icon-pack', icon: 'account' %}
+        </a>
+      {%- endif -%}
+
+      <button
+        class="site-header__icon-btn"
+        data-cart-drawer-open
+        aria-label="{{ 'cart.title' | t | default: 'Cart' }}"
+        aria-expanded="false"
+      >
+        {% render 'icon-pack', icon: 'cart' %}
+        <span class="cart-count" data-cart-count aria-live="polite">{{ cart.item_count }}</span>
+      </button>
+
+      <button
+        class="site-header__icon-btn hamburger-btn"
+        data-mobile-nav-open
+        aria-label="{{ 'accessibility.open_menu' | t | default: 'Open menu' }}"
+        aria-controls="mobile-nav"
+        aria-expanded="false"
+      >
+        {% render 'icon-pack', icon: 'menu' %}
+      </button>
+    </div>
+
+  </div>
+
+  {%- comment -%} MEGA MENUS {%- endcomment -%}
+  {%- for link in section.settings.menu.links -%}
+    {%- if link.links != blank -%}
+      <div
+        id="mega-menu-{{ link.handle }}"
+        class="mega-menu"
+        data-mega-menu="{{ link.handle }}"
+        role="region"
+        aria-label="{{ link.title }}"
+      >
+        <div class="container">
+          {%- assign columns = link.links | size -%}
+          {%- for child in link.links -%}
+            <div class="mega-menu__column">
+              {%- if child.links != blank -%}
+                <p class="mega-menu__column-title">{{ child.title }}</p>
+                {%- for grandchild in child.links -%}
+                  <a
+                    href="{{ grandchild.url }}"
+                    class="mega-menu__link"
+                    {% if grandchild.current %}aria-current="page"{% endif %}
+                  >{{ grandchild.title }}</a>
+                {%- endfor -%}
+              {%- else -%}
+                <a href="{{ child.url }}" class="mega-menu__link mega-menu__link--parent">{{ child.title }}</a>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+
+          {%- if section.settings.mega_menu_image != blank -%}
+            <div class="mega-menu__column mega-menu__column--image">
+              <a href="{{ section.settings.mega_menu_image_link | default: '#' }}">
+                {{
+                  section.settings.mega_menu_image
+                  | image_url: width: 400
+                  | image_tag:
+                    loading: 'lazy',
+                    alt: section.settings.mega_menu_image.alt
+                }}
+              </a>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+
+</header>
+
+{%- comment -%} MOBILE NAV {%- endcomment -%}
+<nav id="mobile-nav" class="mobile-nav" role="dialog" aria-modal="true" aria-label="{{ 'accessibility.menu' | t | default: 'Menu' }}">
+  <div class="mobile-nav__header">
+    <a href="{{ routes.root_url }}" class="site-header__logo" aria-label="{{ shop.name }}">
+      {%- if section.settings.logo != blank -%}
+        {{ section.settings.logo | image_url: width: 200 | image_tag: alt: shop.name, loading: 'lazy' }}
+      {%- else -%}
+        {{ shop.name }}
+      {%- endif -%}
+    </a>
+    <button class="site-header__icon-btn" data-mobile-nav-close aria-label="{{ 'accessibility.close' | t | default: 'Close' }}">
+      {% render 'icon-pack', icon: 'close' %}
+    </button>
+  </div>
+
+  <ul>
+    {%- for link in section.settings.menu.links -%}
+      <li>
+        <a href="{{ link.url }}" class="mobile-nav__link">{{ link.title }}</a>
+        {%- if link.links != blank -%}
+          <ul style="padding-left: 1.6rem; border-left: 1px solid var(--color-border);">
+            {%- for child in link.links -%}
+              <li>
+                <a href="{{ child.url }}" class="mobile-nav__link" style="font-family: var(--font-body-family); font-size: var(--font-size-base);">{{ child.title }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+
+  <div style="margin-top: var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); border-top: 1px solid var(--color-border); padding-top: var(--space-5);">
+    {%- if shop.customer_accounts_enabled -%}
+      <a href="{{ routes.account_url }}" class="btn btn--secondary">{{ 'customer.account.title' | t | default: 'Account' }}</a>
+    {%- endif -%}
+    {%- if section.settings.show_locale_selector and shop.published_locales.size > 1 -%}
+      <div>
+        {%- form 'localization', id: 'mobile-localization-form' -%}
+          <select name="locale_code" onchange="this.form.submit()">
+            {%- for locale in shop.published_locales -%}
+              <option value="{{ locale.iso_code }}"{% if locale.iso_code == request.locale.iso_code %} selected{% endif %}>
+                {{ locale.endonym_name }}
+              </option>
+            {%- endfor -%}
+          </select>
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+  </div>
+</nav>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "site-header-section",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "label": "Logo max width",
+      "min": 60,
+      "max": 300,
+      "step": 10,
+      "default": 140,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_header",
+      "label": "Transparent header over first section",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_locale_selector",
+      "label": "Show locale selector",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "mega_menu_image",
+      "label": "Mega menu featured image"
+    },
+    {
+      "type": "url",
+      "id": "mega_menu_image_link",
+      "label": "Mega menu image link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header"
+    }
+  ]
+}
+{% endschema %}

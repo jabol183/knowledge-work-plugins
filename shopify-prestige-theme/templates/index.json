@@ -1,0 +1,106 @@
+{
+  "sections": {
+    "slideshow": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "heading": "The New Season",
+            "subheading": "Refined essentials, timeless design.",
+            "button_label": "Shop Now",
+            "button_style": "white",
+            "content_position": "center",
+            "overlay_type": "dark",
+            "overlay_opacity": 30,
+            "text_color": "#FFFFFF"
+          }
+        },
+        "slide_2": {
+          "type": "slide",
+          "settings": {
+            "heading": "The Atelier Edit",
+            "button_label": "Explore the Collection",
+            "button_style": "white",
+            "content_position": "middle-left",
+            "overlay_type": "gradient",
+            "overlay_opacity": 40,
+            "text_color": "#FFFFFF"
+          }
+        }
+      },
+      "block_order": ["slide_1", "slide_2"],
+      "settings": {
+        "height": "full-height",
+        "autoplay": true,
+        "autoplay_speed": 5
+      }
+    },
+    "featured_collection_1": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "New Arrivals",
+        "title": "Just In",
+        "layout": "grid",
+        "products_to_show": 8,
+        "products_per_row": 4,
+        "show_view_all": true,
+        "show_swatches": true
+      }
+    },
+    "image_with_text": {
+      "type": "image-with-text-overlay",
+      "settings": {
+        "image_position": "left",
+        "eyebrow": "Our Story",
+        "heading": "Crafted for the discerning few",
+        "body": "<p>Every piece in our collection is the result of uncompromising craft, sourced from the world’s finest ateliers and delivered with quiet confidence.</p>",
+        "button_label": "Discover More",
+        "button_style": "secondary"
+      }
+    },
+    "shop_the_look": {
+      "type": "shop-the-look",
+      "blocks": {
+        "hotspot_1": {
+          "type": "hotspot",
+          "settings": {
+            "position_x": 30,
+            "position_y": 45
+          }
+        },
+        "hotspot_2": {
+          "type": "hotspot",
+          "settings": {
+            "position_x": 65,
+            "position_y": 60
+          }
+        }
+      },
+      "block_order": ["hotspot_1", "hotspot_2"],
+      "settings": {
+        "eyebrow": "The Look",
+        "title": "Shop the Look"
+      }
+    },
+    "featured_collection_2": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Bestsellers",
+        "title": "The Essentials",
+        "layout": "carousel",
+        "products_to_show": 8,
+        "products_per_row": 4,
+        "show_view_all": true,
+        "show_swatches": true
+      }
+    }
+  },
+  "order": [
+    "slideshow",
+    "featured_collection_1",
+    "image_with_text",
+    "shop_the_look",
+    "featured_collection_2"
+  ]
+}

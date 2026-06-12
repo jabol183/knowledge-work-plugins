@@ -1,0 +1,124 @@
+<div
+  id="cart-drawer"
+  class="cart-drawer"
+  role="dialog"
+  aria-modal="true"
+  aria-label="{{ 'cart.title' | t | default: 'Your Cart' }}"
+  aria-hidden="true"
+>
+
+  <div class="cart-drawer__header">
+    <div>
+      <h2 class="cart-drawer__title">{{ 'cart.title' | t | default: 'Cart' }}</h2>
+      <span class="cart-drawer__count" data-cart-drawer-count aria-live="polite">({{ cart.item_count }})</span>
+    </div>
+    <button
+      class="cart-drawer__close site-header__icon-btn"
+      data-cart-drawer-close
+      aria-label="{{ 'accessibility.close' | t | default: 'Close' }}"
+    >
+      {% render 'icon-pack', icon: 'close' %}
+    </button>
+  </div>
+
+  {%- if settings.free_shipping_threshold > 0 -%}
+    <div class="shipping-progress">
+      {%- assign threshold_cents = settings.free_shipping_threshold | times: 100 -%}
+      {%- assign pct = cart.total_price | times: 100 | divided_by: threshold_cents | at_most: 100 -%}
+      <p class="shipping-progress__label">
+        {%- if cart.total_price >= threshold_cents -%}
+          {{ 'cart.free_shipping_reached' | t | default: 'You qualify for free shipping!' }}
+        {%- else -%}
+          {%- assign remaining = threshold_cents | minus: cart.total_price -%}
+          {{ 'cart.free_shipping_progress' | t: amount: remaining | money | default: 'Add more to qualify for free shipping' }}
+        {%- endif -%}
+      </p>
+      <div class="shipping-progress__bar" aria-hidden="true">
+        <div class="shipping-progress__fill" style="width: {{ pct }}%;"></div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="cart-drawer__items" data-cart-drawer-items>
+    {%- if cart.item_count == 0 -%}
+      <div class="cart-drawer__empty">
+        <p class="cart-drawer__empty-title">{{ 'cart.empty' | t | default: 'Your cart is empty' }}</p>
+        <p class="text-secondary">{{ 'cart.empty_subtitle' | t | default: 'Discover our collection and find something you love.' }}</p>
+        <a href="{{ routes.collections_url }}/all" class="btn btn--secondary">{{ 'general.continue_shopping' | t | default: 'Continue Shopping' }}</a>
+      </div>
+    {%- else -%}
+      {%- for item in cart.items -%}
+        <div class="cart-item" data-cart-key="{{ item.key }}">
+          <a href="{{ item.url }}" class="cart-item__image">
+            {%- if item.image -%}
+              {{ item.image | image_url: width: 200 | image_tag: loading: 'lazy', alt: item.image.alt | escape }}
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </a>
+          <div class="cart-item__details">
+            <p class="cart-item__vendor">{{ item.vendor }}</p>
+            <a href="{{ item.url }}" class="cart-item__title">{{ item.product_title }}</a>
+            {%- if item.variant_title != 'Default Title' and item.variant_title != blank -%}
+              <p class="cart-item__variant">{{ item.variant_title }}</p>
+            {%- endif -%}
+            {%- if item.selling_plan_allocation -%}
+              <p class="cart-item__variant">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+            {%- endif -%}
+
+            <div class="cart-item__footer">
+              <div class="quantity-input">
+                <button
+                  class="quantity-input__btn"
+                  data-quantity-change
+                  data-line="{{ item.key }}"
+                  data-direction="-1"
+                  aria-label="{{ 'cart.decrease_quantity' | t | default: 'Decrease quantity' }}"
+                >{% render 'icon-pack', icon: 'minus' %}</button>
+                <input
+                  class="quantity-input__field"
+                  type="number"
+                  value="{{ item.quantity }}"
+                  min="1"
+                  data-line-key="{{ item.key }}"
+                  aria-label="{{ 'cart.item_quantity' | t | default: 'Quantity' }}"
+                >
+                <button
+                  class="quantity-input__btn"
+                  data-quantity-change
+                  data-line="{{ item.key }}"
+                  data-direction="1"
+                  aria-label="{{ 'cart.increase_quantity' | t | default: 'Increase quantity' }}"
+                >{% render 'icon-pack', icon: 'plus' %}</button>
+              </div>
+              <span class="cart-item__price">{{ item.final_line_price | money }}</span>
+              <button
+                class="cart-item__remove"
+                data-cart-remove
+                data-line="{{ item.key }}"
+                aria-label="{{ 'cart.remove' | t | default: 'Remove' }} {{ item.product_title }}"
+              >{% render 'icon-pack', icon: 'trash' %}</button>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  {%- if cart.item_count > 0 -%}
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__subtotal">
+        <span class="cart-drawer__subtotal-label">{{ 'cart.subtotal' | t | default: 'Subtotal' }}</span>
+        <span class="cart-drawer__subtotal-price" data-cart-subtotal>{{ cart.total_price | money }}</span>
+      </div>
+      <p class="body-xs text-secondary text-center">{{ 'cart.taxes_and_shipping' | t | default: 'Taxes and shipping calculated at checkout' }}</p>
+      <a href="{{ routes.checkout_url }}" class="btn btn--primary btn--full" id="cart-checkout-btn">
+        {{ 'cart.checkout' | t | default: 'Checkout' }}
+      </a>
+      <a href="{{ routes.cart_url }}" class="btn btn--ghost btn--full text-center" style="justify-content: center;">
+        {{ 'cart.view_cart' | t | default: 'View Full Cart' }}
+      </a>
+    </div>
+  {%- endif -%}
+
+</div>

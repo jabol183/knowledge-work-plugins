@@ -1,0 +1,362 @@
+<script type="application/json" id="product-json-{{ section.id }}" data-product-json>
+  {{ product | json }}
+</script>
+
+<div class="container" data-product-section data-section-id="{{ section.id }}">
+  <div class="product-layout">
+
+    {%- comment -%} LEFT: Media Gallery {%- endcomment -%}
+    <div
+      class="product-gallery{% if product.media.size > 1 %} product-gallery--with-thumbs{% endif %}"
+      data-product-gallery-mobile
+    >
+
+      {%- if product.media.size > 1 -%}
+        {%- comment -%} Desktop thumbnail strip {%- endcomment -%}
+        <div class="product-gallery__thumbnails" role="list">
+          {%- for media in product.media -%}
+            <button
+              class="product-gallery__thumb{% if forloop.first %} product-gallery__thumb--active{% endif %}"
+              data-thumb="{{ forloop.index0 }}"
+              aria-label="{{ 'product.media.load_image' | t: index: forloop.index | default: 'Load image' }} {{ forloop.index }} {{ 'general.accessibility.of' | t | default: 'of' }} {{ product.media.size }}"
+              role="listitem"
+            >
+              {%- if media.media_type == 'image' -%}
+                {{ media | image_url: width: 120 | image_tag: loading: 'lazy', alt: media.alt | escape }}
+              {%- endif -%}
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      <div class="product-gallery__grid">
+        {%- for media in product.media -%}
+          <div class="product-gallery__item" data-media-id="{{ media.id }}">
+            {%- case media.media_type -%}
+
+            {%- when 'image' -%}
+              {{
+                media
+                | image_url: width: 1200
+                | image_tag:
+                  loading: forloop.first | ternary: 'eager', 'lazy',
+                  fetchpriority: forloop.first | ternary: 'high', 'auto',
+                  width: media.width,
+                  height: media.height,
+                  alt: media.alt | escape,
+                  id: forloop.first | ternary: 'product-main-image', nil,
+                  data: { product_main_image: forloop.first }
+              }}
+
+            {%- when 'video' -%}
+              <div class="product-video" style="aspect-ratio: {{ media.aspect_ratio }}">
+                {{ media | video_tag: autoplay: false, loop: false, controls: true, muted: false }}
+              </div>
+
+            {%- when 'external_video' -%}
+              <div class="product-video" style="aspect-ratio: {{ media.aspect_ratio }}">
+                {{ media | external_video_tag }}
+              </div>
+
+            {%- when 'model' -%}
+              <div class="product-model">
+                {{ media | model_viewer_tag: reveal: 'interaction', toggleable: true }}
+              </div>
+
+            {%- endcase -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- comment -%} RIGHT: Product Details {%- endcomment -%}
+    <div class="product-details" data-animate>
+
+      {%- if product.vendor != blank and section.settings.show_vendor -%}
+        <p class="product-details__vendor eyebrow">{{ product.vendor }}</p>
+      {%- endif -%}
+
+      <h1 class="product-details__title">{{ product.title }}</h1>
+
+      <div class="product-details__price" data-animate data-animate-delay="1">
+        {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+          <span class="product-details__price--sale" data-product-price>
+            {{ product.selected_or_first_available_variant.price | money }}
+          </span>
+          <span class="product-details__price-compare" data-product-compare-price>
+            {{ product.selected_or_first_available_variant.compare_at_price | money }}
+          </span>
+        {%- else -%}
+          <span data-product-price>{{ product.selected_or_first_available_variant.price | money }}</span>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Variant form {%- endcomment -%}
+      <div data-animate data-animate-delay="2">
+        {%- form 'product', product, id: 'product-form-{{ section.id }}', data-add-to-cart-form: '', data-variant-form: '' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" data-product-json-ref value="{{ product | json | escape }}">
+
+          {%- comment -%} Hidden product JSON for JS {%- endcomment -%}
+          <div data-product-json style="display:none;">{{ product | json }}</div>
+
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              <div class="option-group" data-option-selector data-option-index="{{ forloop.index0 }}">
+                <p class="option-group__label">
+                  {{ option.name }}
+                  <span data-selected-option-value>{{ option.selected_value }}</span>
+                </p>
+
+                {%- assign downcased = option.name | downcase -%}
+                {%- if downcased == 'color' or downcased == 'colour' -%}
+                  <div class="variant-swatches" role="radiogroup" aria-label="{{ option.name }}">
+                    {%- for value in option.values -%}
+                      {%- assign color_handle = value | handle -%}
+                      <button
+                        type="button"
+                        class="variant-swatch{% if value == option.selected_value %} variant-swatch--active{% endif %}"
+                        data-variant-value="{{ value }}"
+                        data-selector-type="color"
+                        style="background-color: {{ color_handle }};"
+                        aria-label="{{ value }}"
+                        aria-checked="{{ value == option.selected_value }}"
+                        role="radio"
+                        title="{{ value }}"
+                      ></button>
+                    {%- endfor -%}
+                  </div>
+                  <input type="hidden" name="option{{ forloop.index }}" value="{{ option.selected_value }}">
+
+                {%- else -%}
+                  <div class="variant-buttons" role="radiogroup" aria-label="{{ option.name }}">
+                    {%- for value in option.values -%}
+                      <button
+                        type="button"
+                        class="variant-btn{% if value == option.selected_value %} variant-btn--active{% endif %}"
+                        data-variant-value="{{ value }}"
+                        data-selector-type="text"
+                        aria-label="{{ option.name }}: {{ value }}"
+                        aria-checked="{{ value == option.selected_value }}"
+                        role="radio"
+                      >{{ value }}</button>
+                    {%- endfor -%}
+                  </div>
+                  <input type="hidden" name="option{{ forloop.index }}" value="{{ option.selected_value }}">
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          {%- endunless -%}
+
+          {%- comment -%} Quantity + Add to Cart {%- endcomment -%}
+          <div class="product-form">
+            {%- if section.settings.show_quantity_selector -%}
+              <div class="quantity-input" data-quantity-wrapper>
+                <button type="button" class="quantity-input__btn" onclick="this.nextElementSibling.stepDown(); this.nextElementSibling.dispatchEvent(new Event('change'))" aria-label="{{ 'cart.decrease_quantity' | t | default: 'Decrease' }}">
+                  {% render 'icon-pack', icon: 'minus' %}
+                </button>
+                <input
+                  class="quantity-input__field"
+                  type="number"
+                  name="quantity"
+                  id="quantity-{{ section.id }}"
+                  value="1"
+                  min="1"
+                  aria-label="{{ 'products.product.quantity.label' | t | default: 'Quantity' }}"
+                >
+                <button type="button" class="quantity-input__btn" onclick="this.previousElementSibling.stepUp(); this.previousElementSibling.dispatchEvent(new Event('change'))" aria-label="{{ 'cart.increase_quantity' | t | default: 'Increase' }}">
+                  {% render 'icon-pack', icon: 'plus' %}
+                </button>
+              </div>
+            {%- endif -%}
+
+            <div class="product-form__add-row">
+              <button
+                type="submit"
+                name="add"
+                class="btn btn--primary btn--full"
+                data-submit-btn
+                {%- unless product.selected_or_first_available_variant.available -%}disabled{%- endunless -%}
+                aria-live="polite"
+              >
+                <span class="btn__text">
+                  {%- if product.selected_or_first_available_variant.available -%}
+                    {{ 'products.product.add_to_cart' | t | default: 'Add to Cart' }}
+                  {%- else -%}
+                    {{ 'products.product.sold_out' | t | default: 'Sold Out' }}
+                  {%- endif -%}
+                </span>
+                <span class="btn__spinner" aria-hidden="true">
+                  {% render 'icon-pack', icon: 'spinner' %}
+                </span>
+              </button>
+            </div>
+          </div>
+
+        {%- endform -%}
+      </div>
+
+      {%- comment -%} Description + Info Accordions {%- endcomment -%}
+      <div class="product-accordions" data-animate data-animate-delay="3">
+
+        {%- if product.description != blank -%}
+          <div class="accordion" data-accordion>
+            <button class="accordion__trigger" aria-expanded="true" aria-controls="accordion-desc-{{ section.id }}">
+              <span>{{ 'products.product.description' | t | default: 'Description' }}</span>
+              <span class="accordion__icon">{% render 'icon-pack', icon: 'chevron-down' %}</span>
+            </button>
+            <div class="accordion__content" id="accordion-desc-{{ section.id }}" aria-hidden="false">
+              <div class="accordion__inner">
+                <div class="accordion__body rte">{{ product.description }}</div>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+          {%- when 'accordion' -%}
+            <div class="accordion" data-accordion {{ block.shopify_attributes }}>
+              <button class="accordion__trigger" aria-expanded="false" aria-controls="accordion-block-{{ block.id }}">
+                <span>{{ block.settings.title }}</span>
+                <span class="accordion__icon">{% render 'icon-pack', icon: 'chevron-down' %}</span>
+              </button>
+              <div class="accordion__content" id="accordion-block-{{ block.id }}" aria-hidden="true">
+                <div class="accordion__inner">
+                  <div class="accordion__body rte">{{ block.settings.content }}</div>
+                </div>
+              </div>
+            </div>
+          {%- endcase -%}
+        {%- endfor -%}
+
+      </div>
+
+      {%- comment -%} Share {%- endcomment -%}
+      {%- if section.settings.show_share_buttons -%}
+        <div class="product-share" data-animate data-animate-delay="4">
+          <span class="eyebrow">Share</span>
+          <div style="display:flex; gap: var(--space-3); margin-top: var(--space-3);">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ product.url | full_url | url_encode }}" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">{% render 'icon-pack', icon: 'share' %}</a>
+          </div>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+
+  {%- comment -%} Related products {%- endcomment -%}
+  {%- if section.settings.show_recommendations -%}
+    <div class="section-spacing" style="border-top: 1px solid var(--color-border);">
+      <div class="featured-collection__header" data-animate>
+        <h2 class="featured-collection__heading">{{ 'products.product.you_may_also_like' | t | default: 'You May Also Like' }}</h2>
+      </div>
+      <div id="recommendations-{{ product.id }}" data-product-recommendations data-product-id="{{ product.id }}" data-limit="4">
+        {% render 'product-card', placeholder: true %}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+  (function () {
+    const recEl = document.getElementById('recommendations-{{ product.id }}');
+    if (!recEl) return;
+    const url = `{{ routes.product_recommendations_url }}?product_id={{ product.id }}&limit=4&section_id={{ section.id }}`;
+    fetch(url)
+      .then(r => r.text())
+      .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const inner = doc.querySelector('[data-product-recommendations]');
+        if (inner) recEl.innerHTML = inner.innerHTML;
+      })
+      .catch(() => {});
+  })();
+</script>
+
+<script>
+  document.querySelectorAll('[data-thumb]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const index = parseInt(btn.dataset.thumb, 10);
+      const gallery = document.querySelector('.product-gallery__grid');
+      const items = gallery?.querySelectorAll('.product-gallery__item');
+      if (!items) return;
+      items[index]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      document.querySelectorAll('.product-gallery__thumb').forEach((t, i) => {
+        t.classList.toggle('product-gallery__thumb--active', i === index);
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity_selector",
+      "label": "Show quantity selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": "Show share buttons",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recommendations",
+      "label": "Show product recommendations",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion",
+      "name": "Accordion",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Details & Care"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Add product details, care instructions, or any other relevant information.</p>"
+        }
+      ]
+    },
+    {
+      "type": "size_guide",
+      "name": "Size Guide",
+      "settings": [
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Size guide page"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product",
+      "blocks": [
+        { "type": "accordion", "settings": { "title": "Details & Care" } },
+        { "type": "accordion", "settings": { "title": "Shipping & Returns" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

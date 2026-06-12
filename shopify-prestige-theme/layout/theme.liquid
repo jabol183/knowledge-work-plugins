@@ -1,0 +1,94 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ settings.text_direction | default: 'ltr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="{{ settings.color_background | default: '#FFFFFF' }}">
+
+  {%- if canonical_url != blank -%}
+    <link rel="canonical" href="{{ canonical_url }}">
+  {%- endif -%}
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  <title>
+    {{ page_title }}
+    {%- if current_tags %} &ndash; {{ current_tags | join: ', ' }}{% endif -%}
+    {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif -%}
+    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  </title>
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  {% render 'css-variables' %}
+
+  {{ content_for_header }}
+
+  <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="{{ 'theme.css' | asset_url }}"></noscript>
+
+  <script>
+    document.documentElement.classList.remove('no-js');
+    document.documentElement.classList.add('js');
+
+    window.Shopify = window.Shopify || {};
+    window.Shopify.currency = {{ shop.currency | json }};
+    window.Shopify.money_format = {{ shop.money_format | json }};
+    window.Shopify.locale = {{ request.locale.iso_code | json }};
+    window.theme = {
+      routes: {
+        root: '{{ routes.root_url }}',
+        cart: '{{ routes.cart_url }}',
+        cart_add: '{{ routes.cart_add_url }}',
+        cart_change: '{{ routes.cart_change_url }}',
+        cart_update: '{{ routes.cart_update_url }}',
+        predictive_search: '{{ routes.predictive_search_url }}'
+      },
+      settings: {
+        free_shipping_threshold: {{ settings.free_shipping_threshold | default: 0 | times: 100 }},
+        enable_cart_drawer: {{ settings.enable_cart_drawer | default: true | json }},
+        product_image_aspect_ratio: {{ settings.product_image_aspect_ratio | default: '4/5' | json }}
+      }
+    };
+  </script>
+</head>
+
+<body id="{{ page_title | handle }}" class="template-{{ request.page_type }}{% if request.design_mode %} shopify-design-mode{% endif %}{% if settings.enable_animations %} animations-enabled{% endif %}" data-scroll-locked="false">
+
+  <a href="#MainContent" class="skip-to-content visually-hidden">
+    {{ 'accessibility.skip_to_content' | t | default: 'Skip to content' }}
+  </a>
+
+  {%- section 'announcement-bar' -%}
+  {%- section 'header' -%}
+
+  {% render 'cart-drawer' %}
+
+  <div id="search-modal" class="search-modal" role="dialog" aria-modal="true" aria-label="{{ 'search.title' | t | default: 'Search' }}" hidden>
+    {%- section 'predictive-search' -%}
+  </div>
+
+  <main id="MainContent" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {%- section 'footer' -%}
+
+  <div id="overlay" class="site-overlay" aria-hidden="true"></div>
+
+  <div id="page-transition" class="page-transition" aria-hidden="true"></div>
+
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+
+  {%- if settings.enable_cookie_consent -%}
+    <script>
+      window.Shopify.loadFeatures([{ name: 'consent-tracking-api', version: '0.1' }]);
+    </script>
+  {%- endif -%}
+</body>
+</html>

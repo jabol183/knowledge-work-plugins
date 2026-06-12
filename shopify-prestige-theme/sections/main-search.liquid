@@ -1,0 +1,77 @@
+{% paginate search.results by 24 %}
+<div class="container section-spacing" style="padding-top: calc(var(--header-height) + var(--space-6));">
+
+  <div style="margin-bottom: var(--space-7);" data-animate>
+    <form action="{{ routes.search_url }}" method="get" role="search">
+      <input type="hidden" name="type" value="product">
+      <div style="display: flex; border-bottom: 2px solid var(--color-text-primary); max-width: 60rem;">
+        <input
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          style="flex: 1; height: 6.4rem; font-family: var(--font-heading-family); font-size: var(--font-size-xl); letter-spacing: 0.04em; border: none; outline: none; background: transparent; color: var(--color-text-primary);"
+          placeholder="{{ 'search.placeholder' | t | default: 'Search...' }}"
+          aria-label="{{ 'search.search' | t | default: 'Search' }}"
+          autocomplete="off"
+          autofocus
+        >
+        <button type="submit" class="site-header__icon-btn" aria-label="{{ 'search.search' | t | default: 'Search' }}">
+          {% render 'icon-pack', icon: 'search', width: 24, height: 24 %}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {%- if search.performed -%}
+    {%- if search.results_count > 0 -%}
+      <p class="eyebrow text-secondary" style="margin-bottom: var(--space-6);" data-animate>
+        {{ 'search.results_with_count' | t: count: search.results_count | default: search.results_count | append: ' results' }}
+        {{ 'search.for' | t | default: 'for' }} &ldquo;{{ search.terms }}&rdquo;
+      </p>
+      <div class="product-grid" style="--product-grid-columns: 4;">
+        {%- for item in search.results -%}
+          {%- if item.object_type == 'product' -%}
+            <div data-animate data-animate-delay="{{ forloop.index | modulo: 4 }}">
+              {% render 'product-card', product: item, show_swatches: true %}
+            </div>
+          {%- else -%}
+            <a href="{{ item.url }}" class="product-card" style="grid-column: span 2;" data-animate>
+              <div class="product-card__info">
+                <p class="cart-item__vendor">{{ item.object_type | capitalize }}</p>
+                <h3 class="product-card__title" style="font-size: var(--font-size-md);">{{ item.title }}</h3>
+              </div>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="{{ 'general.pagination.label' | t | default: 'Pagination' }}">
+          {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}" class="pagination__item">{% render 'icon-pack', icon: 'chevron-left' %}</a>{%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}<a href="{{ part.url }}" class="pagination__item">{{ part.title }}</a>
+            {%- elsif part.title == paginate.current_page -%}<span class="pagination__item pagination__item--active">{{ part.title }}</span>
+            {%- else -%}<span class="pagination__item">{{ part.title }}</span>{%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}<a href="{{ paginate.next.url }}" class="pagination__item">{% render 'icon-pack', icon: 'chevron-right' %}</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+
+    {%- else -%}
+      <div style="text-align: center; padding: var(--space-9) 0;" data-animate>
+        <p class="heading-xs" style="margin-bottom: var(--space-4);">{{ 'search.no_results' | t: terms: search.terms | default: 'No results found.' }}</p>
+        <p class="text-secondary">{{ 'search.no_results_hint' | t | default: 'Try a different search term or browse our collections.' }}</p>
+        <a href="{{ routes.collections_url }}/all" class="btn btn--secondary" style="margin-top: var(--space-6);">{{ 'general.continue_shopping' | t | default: 'Browse Collections' }}</a>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+
+</div>
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Search results",
+  "settings": []
+}
+{% endschema %}

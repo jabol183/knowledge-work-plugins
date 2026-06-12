@@ -1,0 +1,173 @@
+{% comment %}
+  Renders a product card.
+  Accepts:
+  - product: {Object} product object
+  - show_vendor: {Boolean}
+  - show_swatches: {Boolean}
+  - placeholder: {Boolean}
+{% endcomment %}
+
+{%- if placeholder -%}
+  <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--product-grid-gap);">
+    {%- for i in (1..4) -%}
+      <div class="product-card" aria-hidden="true">
+        <div class="product-card__media" style="background: var(--color-background-secondary);">
+          {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+        <div class="product-card__info">
+          <p class="product-card__vendor" style="width: 40%; height: 1.2rem; background: var(--color-background-tertiary); border-radius: 2px;"></p>
+          <p class="product-card__title" style="width: 70%; height: 1.4rem; background: var(--color-background-tertiary); border-radius: 2px; margin-top: var(--space-2);"></p>
+          <p class="product-card__price" style="width: 30%; height: 1.4rem; background: var(--color-background-tertiary); border-radius: 2px; margin-top: var(--space-2);"></p>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+{%- else -%}
+
+  {%- assign featured_media = product.featured_media -%}
+  {%- assign second_media = product.media[1] -%}
+  {%- assign on_sale = false -%}
+  {%- if product.compare_at_price > product.price -%}
+    {%- assign on_sale = true -%}
+  {%- endif -%}
+
+  <a
+    href="{{ product.url }}"
+    class="product-card"
+    data-product-card
+    data-product-id="{{ product.id }}"
+    aria-label="{{ product.title }}"
+  >
+    <div class="product-card__media">
+
+      {%- comment -%} Badges {%- endcomment -%}
+      {%- if on_sale or product.available == false -%}
+        <div class="product-card__badges" aria-hidden="true">
+          {%- if product.available == false -%}
+            <span class="product-card__badge">{{ 'products.product.sold_out' | t | default: 'Sold Out' }}</span>
+          {%- elsif on_sale -%}
+            {%- assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+            <span class="product-card__badge product-card__badge--sale">-{{ discount_pct }}%</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Primary image {%- endcomment -%}
+      {%- if featured_media != blank -%}
+        {{
+          featured_media
+          | image_url: width: 600
+          | image_tag:
+            loading: 'lazy',
+            class: 'product-card__image',
+            alt: featured_media.alt | escape | default: product.title,
+            width: featured_media.width,
+            height: featured_media.height
+        }}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'product-card__image placeholder-svg' }}
+      {%- endif -%}
+
+      {%- comment -%} Hover image {%- endcomment -%}
+      {%- if second_media != blank -%}
+        {{
+          second_media
+          | image_url: width: 600
+          | image_tag:
+            loading: 'lazy',
+            class: 'product-card__image product-card__image--hover',
+            alt: second_media.alt | escape | default: product.title
+        }}
+      {%- elsif featured_media != blank -%}
+        {{
+          featured_media
+          | image_url: width: 600
+          | image_tag:
+            loading: 'lazy',
+            class: 'product-card__image product-card__image--hover',
+            alt: featured_media.alt | escape | default: product.title
+        }}
+      {%- endif -%}
+
+      {%- comment -%} Quick-buy trigger {%- endcomment -%}
+      {%- if product.available -%}
+        <div class="product-card__quick-buy" data-quick-buy-trigger="{{ product.id }}">
+          <button
+            type="button"
+            class="btn btn--primary btn--full"
+            data-quick-buy="{{ product.id }}"
+            aria-label="{{ 'products.product.quick_add' | t | default: 'Quick Add' }}: {{ product.title }}"
+            onclick="event.preventDefault(); event.stopPropagation();"
+          >
+            <span>{{ 'products.product.quick_add' | t | default: 'Quick Add' }}</span>
+          </button>
+        </div>
+      {%- endif -%}
+
+    </div>
+
+    <div class="product-card__info">
+      {%- if show_vendor and product.vendor != blank -%}
+        <p class="product-card__vendor">{{ product.vendor }}</p>
+      {%- endif -%}
+
+      <h3 class="product-card__title">{{ product.title }}</h3>
+
+      <div class="product-card__price">
+        {%- if on_sale -%}
+          <span class="product-card__price--sale">{{ product.price | money }}</span>
+          <span class="product-card__price-compare">{{ product.compare_at_price | money }}</span>
+        {%- else -%}
+          <span>
+            {%- if product.price_varies -%}
+              {{ 'products.product.from_price_html' | t: price: product.price_min | money | default: product.price_min | money }}
+            {%- else -%}
+              {{ product.price | money }}
+            {%- endif -%}
+          </span>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Color swatches {%- endcomment -%}
+      {%- if show_swatches != false -%}
+        {%- assign color_option = nil -%}
+        {%- for option in product.options -%}
+          {%- assign option_downcased = option | downcase -%}
+          {%- if option_downcased == 'color' or option_downcased == 'colour' -%}
+            {%- assign color_option = product.options_with_values[forloop.index0] -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if color_option != nil -%}
+          <div class="product-card__swatches" role="list">
+            {%- for value in color_option.values limit: 6 -%}
+              {%- assign color_handle = value | handle -%}
+              {%- comment -%} Find variant image for this color {%- endcomment -%}
+              {%- assign swatch_image = '' -%}
+              {%- for variant in product.variants -%}
+                {%- assign option_index = color_option.position | minus: 1 -%}
+                {%- if variant.options[option_index] == value and variant.image -%}
+                  {%- assign swatch_image = variant.image | image_url: width: 400 -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+              <span
+                class="swatch{% if color_handle == 'white' %} swatch--white{% endif %}"
+                style="background-color: {{ color_handle }};"
+                title="{{ value }}"
+                role="listitem"
+                aria-label="{{ value }}"
+                {%- if swatch_image != '' -%} data-swatch-hover data-swatch-image="{{ swatch_image }}"{%- endif -%}
+              ></span>
+            {%- endfor -%}
+            {%- if color_option.values.size > 6 -%}
+              <span class="body-xs text-secondary" style="line-height: 1.8rem;">+{{ color_option.values.size | minus: 6 }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
+    </div>
+  </a>
+
+{%- endif -%}

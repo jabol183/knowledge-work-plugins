@@ -1,0 +1,31 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "accordion_details": {
+          "type": "accordion",
+          "settings": {
+            "title": "Details & Care",
+            "content": "<p>Crafted from the finest materials. Dry clean only. Do not bleach.</p>"
+          }
+        },
+        "accordion_shipping": {
+          "type": "accordion",
+          "settings": {
+            "title": "Shipping & Returns",
+            "content": "<p>Complimentary shipping on all orders over $150. Free returns within 30 days.</p>"
+          }
+        }
+      },
+      "block_order": ["accordion_details", "accordion_shipping"],
+      "settings": {
+        "show_vendor": true,
+        "show_quantity_selector": true,
+        "show_recommendations": true,
+        "show_share_buttons": false
+      }
+    }
+  },
+  "order": ["main"]
+}

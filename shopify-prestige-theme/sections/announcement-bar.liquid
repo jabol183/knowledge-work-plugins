@@ -1,0 +1,39 @@
+{%- if section.settings.text != blank and section.settings.show_bar -%}
+  <div class="announcement-bar" role="region" aria-label="{{ 'sections.announcement_bar.label' | t | default: 'Announcement' }}">
+    {%- if section.settings.url != blank -%}
+      <a href="{{ section.settings.url }}" style="color: inherit;">{{ section.settings.text }}</a>
+    {%- else -%}
+      <p>{{ section.settings.text }}</p>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_bar",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Announcement text",
+      "default": "Free shipping on orders over $150 — Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "Link URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar"
+    }
+  ]
+}
+{% endschema %}

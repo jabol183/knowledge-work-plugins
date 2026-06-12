@@ -1,0 +1,18 @@
+<div class="container section-spacing" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-top: calc(var(--header-height) + var(--space-8));">
+  <p class="eyebrow" style="margin-bottom: var(--space-4);">404</p>
+  <h1 class="heading-lg" style="margin-bottom: var(--space-5);">{{ '404.title' | t | default: 'Page Not Found' }}</h1>
+  <p class="text-secondary body-lg" style="max-width: 44rem; margin-bottom: var(--space-7);">
+    {{ '404.subtext' | t | default: 'The page you were looking for may have moved, or it no longer exists.' }}
+  </p>
+  <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: center;">
+    <a href="{{ routes.root_url }}" class="btn btn--primary btn--lg">{{ 'general.continue_shopping' | t | default: 'Return Home' }}</a>
+    <a href="{{ routes.search_url }}" class="btn btn--secondary btn--lg">{{ 'search.search' | t | default: 'Search' }}</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "404 page",
+  "settings": []
+}
+{% endschema %}

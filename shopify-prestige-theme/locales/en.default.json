@@ -1,0 +1,120 @@
+{
+  "general": {
+    "meta": { "page": "Page {{page}}" },
+    "continue_shopping": "Continue Shopping",
+    "footer": { "powered_by_shopify": "Powered by Shopify." },
+    "accessibility": { "of": "of" },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "current_page": "Current page"
+    },
+    "password_page": {
+      "coming_soon": "Coming Soon",
+      "admin_link_html": "Are you the store owner? <a href=\"/admin\">Log in here</a>"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "main_menu": "Main menu",
+    "close": "Close",
+    "open_menu": "Open menu",
+    "menu": "Menu"
+  },
+  "search": {
+    "title": "Search",
+    "search": "Search",
+    "placeholder": "Search products, collections...",
+    "results": "Search results",
+    "results_with_count": "{{count}} results",
+    "for": "for",
+    "no_results": "No results for \"{{terms}}\"",
+    "no_results_hint": "Try a different search term or browse our collections.",
+    "prompt": "Start typing to search..."
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": "Your cart is empty",
+    "empty_subtitle": "Discover our collection and find something you love.",
+    "subtotal": "Subtotal",
+    "checkout": "Checkout",
+    "view_cart": "View Full Cart",
+    "update": "Update Cart",
+    "remove": "Remove",
+    "item_quantity": "Quantity",
+    "decrease_quantity": "Decrease quantity",
+    "increase_quantity": "Increase quantity",
+    "taxes_and_shipping": "Taxes and shipping calculated at checkout",
+    "free_shipping_progress": "Spend {{amount}} more for free shipping",
+    "free_shipping_reached": "You qualify for free shipping!",
+    "order_summary": "Order Summary"
+  },
+  "customer": {
+    "account": { "title": "Account" }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "description": "Description",
+      "quantity": { "label": "Quantity" },
+      "from_price_html": "From {{price}}",
+      "quick_add": "Quick Add",
+      "you_may_also_like": "You May Also Like"
+    }
+  },
+  "newsletter": {
+    "button_label": "Subscribe",
+    "success": "Thanks for subscribing!"
+  },
+  "sections": {
+    "slideshow": {
+      "pagination_label": "Slide navigation",
+      "go_to_slide": "Go to slide",
+      "previous_slide": "Previous slide",
+      "next_slide": "Next slide"
+    },
+    "featured_collection": {
+      "view_all": "View All",
+      "no_products": "No products found.",
+      "prev": "Previous products",
+      "next": "Next products"
+    },
+    "collection_template": {
+      "product_count": "{{count}}",
+      "product_count_simple": "products",
+      "sort_by_label": "Sort by",
+      "empty": "No products found",
+      "use_fewer_filters_html": "Try adjusting your filters or <a href=\"{{url}}\">clear all</a>."
+    },
+    "collection_filters": {
+      "filters": "Filters",
+      "clear_all": "Clear all",
+      "active_filters": "Active filters",
+      "min_price": "Min",
+      "max_price": "Max"
+    },
+    "shop_the_look": {
+      "view_product": "View product"
+    },
+    "announcement_bar": {
+      "label": "Announcement"
+    }
+  },
+  "blogs": {
+    "article": {
+      "read_more": "Read More",
+      "back_to_blog": "Back to"
+    }
+  },
+  "localization": {
+    "language_label": "Language",
+    "currency_label": "Currency"
+  },
+  "404": {
+    "title": "Page Not Found",
+    "subtext": "The page you were looking for may have moved, or it no longer exists."
+  }
+}

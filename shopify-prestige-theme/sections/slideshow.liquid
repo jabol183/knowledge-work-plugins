@@ -1,0 +1,271 @@
+<div
+  class="slideshow slideshow--{{ section.settings.height }}"
+  data-slideshow
+  data-autoplay="{{ section.settings.autoplay }}"
+  data-interval="{{ section.settings.autoplay_speed | times: 1000 }}"
+  aria-roledescription="carousel"
+  aria-label="{{ section.settings.accessibility_label | default: 'Slideshow' }}"
+>
+
+  <div class="slideshow__slides" role="list">
+    {%- for block in section.blocks -%}
+      {%- assign text_color = block.settings.text_color | default: '#FFFFFF' -%}
+      <div
+        class="slideshow__slide{% if block.settings.layout == 'split' %} slideshow__slide--split{% endif %}"
+        role="listitem"
+        aria-roledescription="slide"
+        aria-label="{{ forloop.index }} {{ 'general.accessibility.of' | t | default: 'of' }} {{ section.blocks.size }}"
+        aria-hidden="{{ forloop.first | unless: true }}"
+        {{ block.shopify_attributes }}
+      >
+
+        {%- comment -%} Media {%- endcomment -%}
+        {%- if block.settings.image != blank -%}
+          <div class="slideshow__slide-media" style="will-change: transform;">
+            {{
+              block.settings.image
+              | image_url: width: 2400
+              | image_tag:
+                loading: forloop.first | ternary: 'eager', 'lazy',
+                fetchpriority: forloop.first | ternary: 'high', 'auto',
+                alt: block.settings.image.alt | escape | default: block.settings.heading,
+                width: block.settings.image.width,
+                height: block.settings.image.height
+            }}
+          </div>
+        {%- elsif block.settings.video_url != blank -%}
+          <div class="slideshow__slide-media">
+            <video autoplay muted loop playsinline aria-hidden="true" style="width:100%;height:100%;object-fit:cover;">
+              <source src="{{ block.settings.video_url }}" type="video/mp4">
+            </video>
+          </div>
+        {%- else -%}
+          <div class="slideshow__slide-media" style="background: var(--color-background-secondary);">
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Overlay {%- endcomment -%}
+        {%- if block.settings.overlay_type != 'none' -%}
+          <div class="slideshow__slide-overlay slideshow__slide-overlay--{{ block.settings.overlay_type }}" style="opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+        {%- endif -%}
+
+        {%- comment -%} Content {%- endcomment -%}
+        <div
+          class="slideshow__slide-content slideshow__slide-content--{{ block.settings.content_position }}"
+          style="color: {{ text_color }};"
+        >
+          {%- if block.settings.eyebrow != blank -%}
+            <p class="slideshow__eyebrow" data-animate>{{ block.settings.eyebrow }}</p>
+          {%- endif -%}
+
+          {%- if block.settings.heading != blank -%}
+            <h2 class="slideshow__heading" data-animate data-animate-delay="1">{{ block.settings.heading }}</h2>
+          {%- endif -%}
+
+          {%- if block.settings.subheading != blank -%}
+            <p class="slideshow__subheading" data-animate data-animate-delay="2">{{ block.settings.subheading }}</p>
+          {%- endif -%}
+
+          {%- if block.settings.button_label != blank -%}
+            <a
+              href="{{ block.settings.button_url | default: '#' }}"
+              class="btn {% if block.settings.button_style == 'primary' %}btn--primary{% elsif block.settings.button_style == 'white' %}btn--white{% else %}btn--secondary{% endif %}"
+              data-animate data-animate-delay="3"
+            >{{ block.settings.button_label }}</a>
+          {%- endif -%}
+        </div>
+
+      </div>
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%} Navigation {%- endcomment -%}
+  {%- if section.blocks.size > 1 -%}
+    <div class="slideshow__nav" role="tablist" aria-label="{{ 'sections.slideshow.pagination_label' | t | default: 'Slide navigation' }}">
+      {%- for block in section.blocks -%}
+        <button
+          class="slideshow__dot{% if forloop.first %} slideshow__dot--active{% endif %}"
+          role="tab"
+          aria-selected="{{ forloop.first }}"
+          aria-label="{{ 'sections.slideshow.go_to_slide' | t: index: forloop.index | default: 'Go to slide' }} {{ forloop.index }}"
+          data-slide-dot="{{ forloop.index0 }}"
+        ></button>
+      {%- endfor -%}
+    </div>
+
+    <button class="slideshow__arrow slideshow__arrow--prev" aria-label="{{ 'sections.slideshow.previous_slide' | t | default: 'Previous slide' }}">
+      {% render 'icon-pack', icon: 'chevron-left', width: 24, height: 24 %}
+    </button>
+    <button class="slideshow__arrow slideshow__arrow--next" aria-label="{{ 'sections.slideshow.next_slide' | t | default: 'Next slide' }}">
+      {% render 'icon-pack', icon: 'chevron-right', width: 24, height: 24 %}
+    </button>
+  {%- endif -%}
+
+</div>
+
+{% schema %}
+{
+  "name": "Slideshow",
+  "settings": [
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Slide height",
+      "options": [
+        { "value": "full-height", "label": "Full screen" },
+        { "value": "medium", "label": "Medium (70vh)" },
+        { "value": "small", "label": "Small (50vh)" }
+      ],
+      "default": "full-height"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-rotate slides",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Interval (seconds)",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "accessibility_label",
+      "label": "Accessibility label",
+      "default": "Featured collections"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "video_url",
+          "label": "Video URL (MP4)"
+        },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Layout",
+          "options": [
+            { "value": "overlay", "label": "Text overlay" },
+            { "value": "split", "label": "Split (50/50)" }
+          ],
+          "default": "overlay"
+        },
+        {
+          "type": "select",
+          "id": "content_position",
+          "label": "Content position",
+          "options": [
+            { "value": "center", "label": "Center" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "middle-left", "label": "Middle left" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow text"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "New Collection"
+        },
+        {
+          "type": "textarea",
+          "id": "subheading",
+          "label": "Subheading"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button URL"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Button style",
+          "options": [
+            { "value": "primary", "label": "Primary (dark)" },
+            { "value": "white", "label": "White" },
+            { "value": "outline", "label": "Outline" }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "select",
+          "id": "overlay_type",
+          "label": "Overlay style",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "dark", "label": "Dark" },
+            { "value": "gradient", "label": "Gradient" }
+          ],
+          "default": "dark"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 80,
+          "step": 5,
+          "default": 30,
+          "unit": "%"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color",
+          "default": "#FFFFFF"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slideshow",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "heading": "New Arrivals",
+            "subheading": "Discover the latest in luxury essentials.",
+            "button_label": "Shop Now"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "heading": "The Atelier Edit",
+            "button_label": "Explore"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,72 @@
+{% comment %} Fallback cart page — AJAX drawer is primary UX {% endcomment %}
+<div class="container section-spacing" style="padding-top: calc(var(--header-height) + var(--space-6));">
+  <h1 class="heading-sm" style="margin-bottom: var(--space-7);" data-animate>
+    {{ 'cart.title' | t | default: 'Your Cart' }}
+    <span style="font-family: var(--font-body-family); font-size: var(--font-size-base); font-weight: 300; color: var(--color-text-secondary); margin-left: var(--space-3);">({{ cart.item_count }})</span>
+  </h1>
+
+  {%- if cart.item_count == 0 -%}
+    <div style="text-align: center; padding: var(--space-9) 0;">
+      <p class="heading-xs" style="margin-bottom: var(--space-5);">{{ 'cart.empty' | t | default: 'Your cart is empty' }}</p>
+      <a href="{{ routes.collections_url }}/all" class="btn btn--primary btn--lg">{{ 'general.continue_shopping' | t | default: 'Continue Shopping' }}</a>
+    </div>
+  {%- else -%}
+    <div style="display: grid; grid-template-columns: 1fr 36rem; gap: var(--space-8); align-items: start;">
+      <div>
+        {%- form 'cart', cart -%}
+          {%- for item in cart.items -%}
+            <div class="cart-item" style="grid-template-columns: 12rem 1fr; gap: var(--space-6); padding-block: var(--space-6);">
+              <a href="{{ item.url }}" class="cart-item__image" style="aspect-ratio: 4/5;">
+                {%- if item.image -%}
+                  {{ item.image | image_url: width: 300 | image_tag: loading: 'lazy', alt: item.image.alt | escape }}
+                {%- endif -%}
+              </a>
+              <div class="cart-item__details">
+                <p class="cart-item__vendor">{{ item.vendor }}</p>
+                <a href="{{ item.url }}" class="cart-item__title" style="font-size: var(--font-size-md);">{{ item.product_title }}</a>
+                {%- if item.variant_title != 'Default Title' and item.variant_title != blank -%}
+                  <p class="cart-item__variant">{{ item.variant_title }}</p>
+                {%- endif -%}
+                <div class="cart-item__footer" style="margin-top: var(--space-5);">
+                  <div class="quantity-input">
+                    <button type="button" class="quantity-input__btn" onclick="this.nextElementSibling.stepDown()">{% render 'icon-pack', icon: 'minus' %}</button>
+                    <input class="quantity-input__field" type="number" name="updates[]" value="{{ item.quantity }}" min="0">
+                    <button type="button" class="quantity-input__btn" onclick="this.previousElementSibling.stepUp()">{% render 'icon-pack', icon: 'plus' %}</button>
+                  </div>
+                  <span class="cart-item__price" style="font-size: var(--font-size-md);">{{ item.final_line_price | money }}</span>
+                  <a href="{{ item.url_to_remove }}" class="cart-item__remove" aria-label="{{ 'cart.remove' | t | default: 'Remove' }}">
+                    {% render 'icon-pack', icon: 'trash' %}
+                  </a>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+          <button type="submit" name="update" class="btn btn--secondary" style="margin-top: var(--space-5);">
+            {{ 'cart.update' | t | default: 'Update Cart' }}
+          </button>
+        {%- endform -%}
+      </div>
+
+      <div style="position: sticky; top: calc(var(--header-height) + var(--space-6)); border: 1px solid var(--color-border); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4);">
+        <h2 class="eyebrow" style="letter-spacing: 0.12em;">{{ 'cart.order_summary' | t | default: 'Order Summary' }}</h2>
+        <div class="cart-drawer__subtotal">
+          <span class="cart-drawer__subtotal-label">{{ 'cart.subtotal' | t | default: 'Subtotal' }}</span>
+          <span class="cart-drawer__subtotal-price">{{ cart.total_price | money }}</span>
+        </div>
+        <p class="body-xs text-secondary">{{ 'cart.taxes_and_shipping' | t | default: 'Taxes and shipping calculated at checkout' }}</p>
+        {%- form 'cart', cart -%}
+          <button type="submit" name="checkout" class="btn btn--primary btn--full btn--lg">
+            {{ 'cart.checkout' | t | default: 'Proceed to Checkout' }}
+          </button>
+        {%- endform -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart page",
+  "settings": []
+}
+{% endschema %}

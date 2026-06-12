@@ -1,0 +1,236 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="site-footer__grid">
+
+    {%- comment -%} Brand column {%- endcomment -%}
+    <div class="footer-brand">
+      <a href="{{ routes.root_url }}" class="footer-logo" aria-label="{{ shop.name }}">
+        {%- if section.settings.logo != blank -%}
+          {{ section.settings.logo | image_url: width: 240 | image_tag: loading: 'lazy', alt: shop.name, style: 'filter: invert(1); height: 3rem; width: auto;' }}
+        {%- else -%}
+          {{ shop.name }}
+        {%- endif -%}
+      </a>
+
+      {%- if section.settings.description != blank -%}
+        <p class="footer-desc">{{ section.settings.description }}</p>
+      {%- endif -%}
+
+      {%- comment -%} Newsletter {%- endcomment -%}
+      {%- if section.settings.show_newsletter -%}
+        <div>
+          <p style="font-size: var(--font-size-xs); letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; margin-bottom: var(--space-3);">
+            {{ section.settings.newsletter_label | default: 'Subscribe to our newsletter' }}
+          </p>
+          {%- form 'customer', id: 'footer-newsletter-form' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <div class="newsletter-form">
+              <input
+                class="newsletter-input"
+                type="email"
+                name="contact[email]"
+                id="footer-email"
+                placeholder="{{ section.settings.newsletter_placeholder | default: 'Your email address' }}"
+                autocomplete="email"
+                required
+                aria-label="{{ section.settings.newsletter_placeholder | default: 'Your email address' }}"
+              >
+              <button type="submit" class="btn btn--primary" aria-label="{{ 'newsletter.button_label' | t | default: 'Subscribe' }}">
+                {% render 'icon-pack', icon: 'arrow-right' %}
+              </button>
+            </div>
+            {%- if form.posted_successfully? -%}
+              <p style="font-size: var(--font-size-xs); opacity: 0.6; margin-top: var(--space-2);">
+                {{ 'newsletter.success' | t | default: 'Thanks for subscribing!' }}
+              </p>
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Social icons {%- endcomment -%}
+      {%- if section.settings.show_social -%}
+        <div class="footer-social" aria-label="Social media links">
+          {%- if settings.social_instagram_link != blank -%}
+            <a href="{{ settings.social_instagram_link }}" class="footer-social-link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_facebook_link != blank -%}
+            <a href="{{ settings.social_facebook_link }}" class="footer-social-link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_pinterest_link != blank -%}
+            <a href="{{ settings.social_pinterest_link }}" class="footer-social-link" target="_blank" rel="noopener noreferrer" aria-label="Pinterest">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.852 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.771 0 3.132-1.866 3.132-4.562 0-2.384-1.714-4.052-4.163-4.052-2.834 0-4.498 2.126-4.498 4.324 0 .856.33 1.773.741 2.276a.3.3 0 01.069.286c-.076.31-.242.995-.275 1.134-.044.183-.145.222-.335.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.445 2.962.445 5.522 0 10-4.477 10-10S17.522 2 12 2z"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_tiktok_link != blank -%}
+            <a href="{{ settings.social_tiktok_link }}" class="footer-social-link" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.77a4.85 4.85 0 01-1.01-.08z"/></svg>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Menu columns {%- endcomment -%}
+    {%- for i in (1..3) -%}
+      {%- assign menu_setting = 'menu_' | append: i -%}
+      {%- assign title_setting = 'menu_' | append: i | append: '_title' -%}
+      {%- assign menu = section.settings[menu_setting] -%}
+      {%- if menu != blank -%}
+        <div>
+          <p class="footer-col-title">{{ section.settings[title_setting] | default: menu.title }}</p>
+          {%- for link in linklists[menu].links -%}
+            <a href="{{ link.url }}" class="footer-link">{{ link.title }}</a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+  </div>
+
+  <div class="site-footer__bottom">
+    <p class="footer-copyright">
+      &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}.
+      {{ 'general.footer.powered_by_shopify' | t | default: 'Powered by Shopify.' }}
+    </p>
+
+    <div class="footer-localization">
+      {%- if section.settings.show_locale_selector and shop.published_locales.size > 1 -%}
+        {%- form 'localization', id: 'footer-localization-form' -%}
+          <select name="locale_code" onchange="this.form.submit()" aria-label="{{ 'localization.language_label' | t | default: 'Language' }}" style="background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.3); color: white; font-size: var(--font-size-xs); opacity: 0.6; padding: 2px 4px; cursor: pointer;">
+            {%- for locale in shop.published_locales -%}
+              <option value="{{ locale.iso_code }}"{% if locale.iso_code == request.locale.iso_code %} selected{% endif %}>
+                {{ locale.endonym_name }}
+              </option>
+            {%- endfor -%}
+          </select>
+        {%- endform -%}
+      {%- endif -%}
+
+      {%- if section.settings.show_currency_selector and shop.enabled_currencies.size > 1 -%}
+        {%- form 'localization', id: 'footer-currency-form' -%}
+          <select name="currency_code" onchange="this.form.submit()" aria-label="{{ 'localization.currency_label' | t | default: 'Currency' }}" style="background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.3); color: white; font-size: var(--font-size-xs); opacity: 0.6; padding: 2px 4px; cursor: pointer;">
+            {%- for currency in shop.enabled_currencies -%}
+              <option value="{{ currency.iso_code }}"{% if currency == cart.currency %} selected{% endif %}>
+                {{ currency.iso_code }} {{ currency.symbol }}
+              </option>
+            {%- endfor -%}
+          </select>
+        {%- endform -%}
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo (white version)"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Brand description",
+      "default": "Premium goods for the discerning individual."
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter signup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_label",
+      "label": "Newsletter label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_placeholder",
+      "label": "Email placeholder",
+      "default": "Your email address"
+    },
+    {
+      "type": "header",
+      "content": "Social"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social icons",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Navigation columns"
+    },
+    {
+      "type": "text",
+      "id": "menu_1_title",
+      "label": "Column 1 title",
+      "default": "Shop"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_1",
+      "label": "Column 1 menu",
+      "default": "footer"
+    },
+    {
+      "type": "text",
+      "id": "menu_2_title",
+      "label": "Column 2 title",
+      "default": "Company"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_2",
+      "label": "Column 2 menu"
+    },
+    {
+      "type": "text",
+      "id": "menu_3_title",
+      "label": "Column 3 title",
+      "default": "Help"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_3",
+      "label": "Column 3 menu"
+    },
+    {
+      "type": "header",
+      "content": "Localization"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_locale_selector",
+      "label": "Show language selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_selector",
+      "label": "Show currency selector",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer"
+    }
+  ]
+}
+{% endschema %}
